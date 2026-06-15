@@ -51,19 +51,19 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 		reqArr := strings.Split(request, "\r\n")
 
 		switch {
-			case strings.Contains(strings.ToUpper(request), "PING"):
+			case strings.ToUpper(reqArr[2]) == "PING":
 				conn.Write([]byte("*1\r\n$4\r\nPONG\r\n"))
 
-			case strings.Contains(strings.ToUpper(request), "ECHO"):
+			case strings.ToUpper(reqArr[2]) == "ECHO":
 				fmt.Println(reqArr)
 				conn.Write([]byte("+" + reqArr[4] + "\r\n"))
 			
-			case strings.Contains(strings.ToUpper(request), "FLUSHALL"):
+			case strings.ToUpper(reqArr[2]) == "FLUSHALL":
 				myStore = make(map[string]string)
 				conn.Write([]byte("+OK\r\n"))
 				fmt.Println(myStore)
 			
-			case strings.Contains(strings.ToUpper(request), "INCRBY"):
+			case strings.ToUpper(reqArr[2]) == "INCRBY":
 				key := reqArr[4]
 				incrStr := reqArr[6]
 				incrVal, err := strconv.Atoi(incrStr)
@@ -87,7 +87,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 
-			case strings.Contains(strings.ToUpper(request), "INCR"):
+			case strings.ToUpper(reqArr[2]) == "INCR":
 				key := reqArr[4]
 				val, ok := myStore[key]
 				if !ok {
@@ -105,7 +105,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 			
-			case strings.Contains(strings.ToUpper(request), "DECRBY"):
+			case strings.ToUpper(reqArr[2]) ==  "DECRBY":
 				key := reqArr[4]
 				decrStr := reqArr[6]
 				decrVal, err := strconv.Atoi(decrStr)
@@ -129,7 +129,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 
-			case strings.Contains(strings.ToUpper(request), "DECR"):
+			case strings.ToUpper(reqArr[2]) ==  "DECR":
 				key := reqArr[4]
 				val, ok := myStore[key]
 				if !ok {
@@ -147,7 +147,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 
-			case strings.Contains(strings.ToUpper(request), "MSETNX"):		
+			case strings.ToUpper(reqArr[2]) ==  "MSETNX":		
 				exists := false
 				for i := 4; i < len(reqArr); i += 4 {
 					key := reqArr[i]
@@ -167,7 +167,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				fmt.Println(reqArr)
 				fmt.Println(myStore)
 
-			case strings.Contains(strings.ToUpper(request), "SETNX"):
+			case strings.ToUpper(reqArr[2]) == "SETNX":
 				keyPresent := false
 				for key := range myStore{
 					if key == reqArr[4]{
@@ -181,7 +181,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)	
 				
-			case strings.Contains(strings.ToUpper(request), "MSET"):				
+			case strings.ToUpper(reqArr[2]) ==  "MSET":				
 				for i:=4;i<len(reqArr);i+=4{					
 					myStore[reqArr[i]] = reqArr[i+2]
 				}
@@ -194,7 +194,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				fmt.Println(myStore)
 				conn.Write([]byte("+1\r\n"))
 			
-			case strings.Contains(strings.ToUpper(request), "APPEND"):
+			case strings.ToUpper(reqArr[2]) == "APPEND":
 				key := reqArr[4]
 				value := reqArr[6]
 				val, ok := myStore[key]
@@ -214,7 +214,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 
 
-			case strings.Contains(strings.ToUpper(request), "MGET"):
+			case strings.ToUpper(reqArr[2]) ==  "MGET":
 				keys := []string{}
 				for i := 4; i < len(reqArr); i+=2 {
 					keys = append(keys, reqArr[i])
@@ -227,8 +227,8 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 						conn.Write([]byte("$-1\r\n")) 
 					}
 				}
-				fmt.Println("reqArr:", reqArr)
-				fmt.Println("myStore:", myStore)
+				fmt.Println(reqArr)
+				fmt.Println(myStore)
 
 			case strings.ToUpper(reqArr[2]) == "GET":
 				value, ok := myStore[reqArr[4]]
@@ -239,7 +239,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 			
-			case strings.Contains(strings.ToUpper(request), "DEL"):
+			case strings.ToUpper(reqArr[2]) ==  "DEL":
 				keysDel := 0
 				for i:=4;i<len(reqArr);i=i+2{
 					if i % 2 == 0{ 
@@ -252,7 +252,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				conn.Write([]byte("+" +  strconv.Itoa(keysDel)  + "\r\n"))
 				fmt.Println(myStore)
 
-			case strings.Contains(strings.ToUpper(request), "EXISTS"):
+			case strings.ToUpper(reqArr[2]) == "EXISTS":
 				keyExists := 0
 				for i:=4;i<len(reqArr);i=i+2{
 					if i % 2 == 0{ 
@@ -264,7 +264,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				conn.Write([]byte("+" +  strconv.Itoa(keyExists)  + "\r\n"))
 				fmt.Println(myStore)
 			
-			case strings.Contains(strings.ToUpper(request), "KEYS"):
+			case strings.ToUpper(reqArr[2]) == "KEYS":
 				if _, ok := myStore[reqArr[4]]; ok {
 					conn.Write([]byte("+1\r\n"))
 				}else{
@@ -272,11 +272,11 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 			
-			case strings.Contains(strings.ToUpper(request), "STRLEN"):
+			case strings.ToUpper(reqArr[2]) == "STRLEN":
 				fmt.Println(myStore)
 				conn.Write([]byte(":" + strconv.Itoa(len(myStore[reqArr[4]])) + "\r\n"))
 
-			case strings.Contains(strings.ToUpper(request), "EXPIRE"):
+			case strings.ToUpper(reqArr[2]) == "EXPIRE":
 				key := reqArr[4]
 				seconds, err := strconv.Atoi(reqArr[6])
 				if err != nil {
@@ -291,7 +291,7 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}
 				fmt.Println(myStore)
 
-			case strings.Contains(strings.ToUpper(request), "TTL"):
+			case strings.ToUpper(reqArr[2]) == "TTL":
 				key := reqArr[4]
 				_, ok := myStore[key]
 				if !ok {
@@ -323,6 +323,22 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 			
 			case strings.ToUpper(reqArr[2]) == "HSET":
 				key := reqArr[4]
+				if _, ok := hashStore[key]; !ok {
+					hashStore[key] = make(map[string]string)
+				}	
+				_, exists := hashStore[key][reqArr[6]]
+				if !exists {
+					hashStore[key][reqArr[6]] = reqArr[8]
+					conn.Write([]byte(":1\r\n"))
+				}else{
+					hashStore[key][reqArr[6]] = reqArr[8]
+					conn.Write([]byte(":0\r\n"))
+				}	
+				fmt.Println(reqArr)
+				fmt.Println(hashStore)
+				
+			case strings.ToUpper(reqArr[2]) == "HMSET":
+				key := reqArr[4]
 				addF := 0
 				if _, ok := hashStore[key]; !ok {
 					hashStore[key] = make(map[string]string)
@@ -337,6 +353,21 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				fmt.Println(reqArr)
 				fmt.Println(hashStore)
 				conn.Write([]byte(":" + strconv.Itoa(addF) + "\r\n"))
+				
+			case strings.ToUpper(reqArr[2]) == "HSETNX":
+				key := reqArr[4]
+				if _, ok := hashStore[key]; !ok {
+					hashStore[key] = make(map[string]string)
+				}
+				_, exists := hashStore[key][reqArr[6]]
+				if !exists {
+					hashStore[key][reqArr[6]] = reqArr[8]
+					conn.Write([]byte(":1\r\n"))
+				}else{
+					conn.Write([]byte(":0\r\n"))
+				}
+				fmt.Println(reqArr)
+				fmt.Println(hashStore)
 			
 			case strings.ToUpper(reqArr[2]) == "HGET":
 				if len(reqArr) < 7{
@@ -350,7 +381,6 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 					fmt.Println(reqArr)
 					break
 				}
-				
 				val, exists := innerMap[reqArr[6]]
 				if !exists {
 					conn.Write([]byte("$-1\r\n"))
@@ -359,6 +389,124 @@ func handleConnection(conn net.Conn, myStore map[string]string, expStore map[str
 				}		
 				conn.Write([]byte("$" + strconv.Itoa(len(val)) + "\r\n" + val + "\r\n"))
 				fmt.Println(reqArr)
+				fmt.Println(hashStore)
+
+			case strings.ToUpper(reqArr[2]) == "HMGET":
+				if len(reqArr) < 7{
+					conn.Write([]byte("-ERR no fields given for HMGET\r\n"))
+        			break
+				}
+				key := reqArr[4]
+				innerMap, ok := hashStore[key]
+				fields := []string{}
+				for i := 6; i < len(reqArr); i+=2 {
+					fields = append(fields, reqArr[i])
+				}
+				conn.Write([]byte(fmt.Sprintf("*%d\r\n", len(fields))))
+				for i:=0;i<len(fields);i++{
+					if !ok {
+						conn.Write([]byte("$-1\r\n"))
+						continue
+					}
+					val, exists := innerMap[fields[i]]
+					if !exists {
+						conn.Write([]byte("$-1\r\n"))
+					}	else{	
+						conn.Write([]byte("$" + strconv.Itoa(len(val)) + "\r\n" + val + "\r\n"))
+					}
+				}
+				fmt.Println(reqArr)
+				fmt.Println(hashStore)
+
+			case strings.ToUpper(reqArr[2]) == "HGETALL":
+				if len(reqArr) < 5{
+					conn.Write([]byte("-ERR no minimmum arguments given for HGETALL\r\n"))
+        			break
+				}
+				key := reqArr[4]
+				innerMap, ok := hashStore[key]
+				if !ok {
+					conn.Write([]byte("$-1\r\n"))
+					fmt.Println(reqArr)
+					break
+				}
+				conn.Write([]byte(fmt.Sprintf("*%d\r\n", 2*len(innerMap))))
+				for field,val := range innerMap{
+					conn.Write([]byte("$" + strconv.Itoa(len(field)) + "\r\n" + field + "\r\n"))
+        			conn.Write([]byte("$" + strconv.Itoa(len(val)) + "\r\n" + val + "\r\n"))
+				}
+				fmt.Println(innerMap)
+				fmt.Println(hashStore)
+			
+			case strings.ToUpper(reqArr[2]) == "HDEL":
+				key := reqArr[4]
+				innerMap, ok := hashStore[key]
+				if !ok {
+					conn.Write([]byte(":0\r\n")) 
+					break
+				}
+				rmF := 0
+				for i:=6;i<len(reqArr);i+=2{	
+					field := reqArr[i]
+					_, exists := innerMap[field]
+					if exists {
+						rmF++
+						delete(innerMap,field)
+					}
+				}
+				fmt.Println(reqArr)
+				fmt.Println(hashStore)
+				conn.Write([]byte(":" + strconv.Itoa(rmF) + "\r\n"))
+
+			case strings.ToUpper(reqArr[2]) == "HKEYS":
+				if len(reqArr) < 5{
+					conn.Write([]byte("-ERR no minimmum arguments given for HKEYS\r\n"))
+        			break
+				}
+				key := reqArr[4]
+				innerMap, ok := hashStore[key]
+				if !ok {
+					conn.Write([]byte("*0\r\n"))
+					break
+				}
+				conn.Write([]byte(fmt.Sprintf("*%d\r\n", len(innerMap))))
+				for field:= range innerMap{
+					conn.Write([]byte("$" + strconv.Itoa(len(field)) + "\r\n" + field + "\r\n"))
+				}
+				fmt.Println(innerMap)
+				fmt.Println(hashStore)
+
+			case strings.ToUpper(reqArr[2]) == "HVALS":
+				if len(reqArr) < 5{
+					conn.Write([]byte("-ERR number of arguments given for HVALS\r\n"))
+        			break
+				}
+				key := reqArr[4]
+				innerMap, ok := hashStore[key]
+				if !ok {
+					conn.Write([]byte("*0\r\n"))
+					break
+				}
+				conn.Write([]byte(fmt.Sprintf("*%d\r\n", len(innerMap))))
+				for _,val:= range innerMap{
+					conn.Write([]byte("$" + strconv.Itoa(len(val)) + "\r\n" + val + "\r\n"))
+				}
+				fmt.Println(innerMap)
+				fmt.Println(hashStore)
+			
+			case strings.ToUpper(reqArr[2]) == "HLEN":
+				if len(reqArr) < 5{
+					conn.Write([]byte("-ERR no minimmum arguments given for HLEN\r\n"))
+        			break
+				}
+				key := reqArr[4]
+				innerMap, ok := hashStore[key]
+				if !ok {
+					conn.Write([]byte(":0\r\n"))
+				}else{
+					conn.Write([]byte(":" + strconv.Itoa(len(innerMap)) + "\r\n"))
+				}
+				fmt.Println(innerMap)
 				fmt.Println(hashStore)
 
 			default:

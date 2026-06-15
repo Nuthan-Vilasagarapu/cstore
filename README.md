@@ -31,14 +31,15 @@ Follow https://redis.io/docs/latest/commands/redis-8-8-commands/
 - [x] PERSIST
 - [x] HSET
 - [x] HGET
-- [ ] HGETALL
-- [ ] HMSET
-- [ ] HSETNX
+- [x] HGETALL
+- [x] HMGET
+- [x] HMSET
+- [x] HSETNX
 - [ ] HSETEX
-- [ ] HDEL
-- [ ] HKEYS
-- [ ] HLEN
-- [ ] HVALS
+- [x] HDEL
+- [x] HKEYS
+- [X] HLEN
+- [x] HVALS
 
 ## Future Goals
 - Implement DB
