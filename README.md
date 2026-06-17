@@ -8,26 +8,25 @@ Follow https://redis.io/docs/latest/commands/redis-8-8-commands/
 
 - [x] PING
 - [x] SET
-- [x] GET <!--  not handeled with expiry time -->
-- [ ] SETEX <!--  doubt how to implement time seconds -->
+- [x] GET 
+- [x] SETEX 
 - [x] SETNX
 - [x] DEL 
 - [x] ECHO
 - [x] EXISTS
-- [x] KEYS <!-- pattern matching not done -->
+- [x] KEYS 
 - [x] APPEND 
 - [x] STRLEN
 - [x] MSET
 - [x] MGET
 - [x] MSETNX
-- [ ] MSETEX <!--  doubt how to implement for time seconds -->
 - [x] FLUSHALL
 - [x] INCR
 - [x] INCRBY
 - [x] DECR
 - [x] DECRBY
-- [x] EXPIRE <!-- no {nx, xx, gt, lt} and some doubt init still-->
-- [x] TTL <!-- only some done not full -->
+- [x] EXPIRE 
+- [x] TTL 
 - [x] PERSIST
 - [x] HSET
 - [x] HGET
@@ -35,7 +34,7 @@ Follow https://redis.io/docs/latest/commands/redis-8-8-commands/
 - [x] HMGET
 - [x] HMSET
 - [x] HSETNX
-- [ ] HSETEX
+- [x] HSETEX
 - [x] HDEL
 - [x] HKEYS
 - [X] HLEN
